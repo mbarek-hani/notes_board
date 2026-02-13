@@ -1,6 +1,7 @@
 import mongoose from 'mongoose';
+import { body, param } from "express-validator";
 
-const noteSchema = new mongoos.Schema({
+const noteSchema = new mongoose.Schema({
     body: {
         type: String,
         required: true
@@ -23,3 +24,32 @@ const noteSchema = new mongoos.Schema({
 }, { timestamps: true });
 
 export default mongoose.model('Note', noteSchema);
+
+//validation
+export const createNoteValidator = [
+    body("body")
+        .notEmpty().withMessage("Body is required"),
+
+    body("colors")
+        .notEmpty().withMessage("Color is required"),
+
+    body("position")
+        .notEmpty().withMessage("Position is required")
+];
+
+export const updateNoteValidator = [
+    param("id")
+        .isMongoId().withMessage("Invalid note ID"),
+
+    body("body")
+        .optional()
+        .notEmpty().withMessage("Body cannot be empty"),
+
+    body("colors")
+        .optional()
+        .notEmpty().withMessage("Color cannot be empty"),
+
+    body("position")
+        .optional()
+        .notEmpty().withMessage("Position cannot be empty")
+];
