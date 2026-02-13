@@ -1,4 +1,7 @@
 import express from "express";
+import cors from "cors";
+import morgan from "morgan";
+import authRouter from "./routes/auth.js";
 
 //Routes
 import NotesRoutes from './routes/notesRoutes.js'
@@ -9,9 +12,11 @@ import "./config/db.js";
 const app = express();
 app.use(express.json())
 
-app.get("/api", (req, res) => {
-  res.status(200).json({ data: "home page" });
-});
+app.use(cors());
+app.use(morgan('dev'));
+app.use(express.json());
+
+
 
 app.use('/api/notes', NotesRoutes)
 
