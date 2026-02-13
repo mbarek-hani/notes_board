@@ -35,3 +35,13 @@ export function setZIndex(selectedCard: HTMLDivElement | null) {
     }
   });
 }
+
+export function bodyParser(value: string): string {
+  try {
+    JSON.parse(value);
+    return JSON.parse(value);
+  } catch (error) {
+    console.error(error);
+    return value;
+  }
+}

@@ -1,7 +1,7 @@
 import { useEffect, useRef, useState } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
 import Trash from "./icons/Trash";
-import { setNewOffset, autoGrow, setZIndex } from "../utils.js";
+import { setNewOffset, autoGrow, setZIndex, bodyParser } from "../utils.js";
 import type { Note, Position, Colors } from "../types.js";
 
 type NoteCardProps = {
@@ -10,7 +10,7 @@ type NoteCardProps = {
 
 function NoteCard({ note }: NoteCardProps) {
   const colors: Colors = JSON.parse(note.colors);
-  const body: string = JSON.parse(note.body);
+  const body = bodyParser(note.body);
 
   const [position, setPositon] = useState<Position>(JSON.parse(note.position));
 
