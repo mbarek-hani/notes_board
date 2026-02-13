@@ -5,7 +5,6 @@ const noteSchema = new mongoose.Schema(
 	{
 		body: {
 			type: String,
-			required: true,
 		},
 		colors: {
 			type: String,
@@ -29,8 +28,6 @@ export default mongoose.model("Note", noteSchema);
 
 //validation
 export const createNoteValidator = [
-	body("body").notEmpty().withMessage("Body is required"),
-
 	body("colors").notEmpty().withMessage("Color is required"),
 
 	body("position").notEmpty().withMessage("Position is required"),
