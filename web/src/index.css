@@ -22,7 +22,7 @@ body {
     background-image:
         linear-gradient(#292a30 0.1em, transparent 0.1em),
         linear-gradient(90deg, #292a30 0.1em, transparent 0.1em);
-    background-size: 4em 4em;
+    background-size: 2em 2em;
     height: 100vh;
     position: relative;
     overflow: auto;
