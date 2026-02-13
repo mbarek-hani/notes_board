@@ -1,9 +1,8 @@
 import express from "express";
 import cors from "cors";
 import morgan from "morgan";
-import authRouter from "./routes/auth.js";
 
-//Routes
+import authRouter from "./routes/auth.js";
 import NotesRoutes from './routes/notesRoutes.js'
 
 //db connection
@@ -16,9 +15,9 @@ app.use(cors());
 app.use(morgan('dev'));
 app.use(express.json());
 
+app.use('/api/auth', authRouter);
 
-
-app.use('/api/notes', NotesRoutes)
+app.use('/api/notes', NotesRoutes);
 
 //running server
 const PORT = process.env.PORT || 3005;

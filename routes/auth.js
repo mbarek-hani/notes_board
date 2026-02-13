@@ -5,7 +5,7 @@ import express from "express";
 
 const authRouter = express.Router();
 
-authRouter.post('/api/auth/register', async (req, res) => {
+authRouter.post('/register', async (req, res) => {
     try {
         const { userName, email, password } = req.body;
         // Verifier si l ' email existe
@@ -42,7 +42,7 @@ authRouter.post('/api/auth/register', async (req, res) => {
     }
 });
 
-authRouter.post('/api/auth/login', async (req, res) => {
+authRouter.post('/login', async (req, res) => {
     try {
         const { email, password } = req.body;
 
