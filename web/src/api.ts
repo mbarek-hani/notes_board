@@ -42,3 +42,21 @@ export async function updateNote(id: string, payload: any) {
     }
   }
 }
+
+export async function deleteNote(id: string) {
+  try {
+    const response = await fetch(`${API_URL}/notes/${id}`, {
+      method: "DELETE",
+    });
+    if (!response.ok) {
+      console.error("server error");
+      return;
+    }
+  } catch (error) {
+    if (error instanceof Error) {
+      console.log(error.message);
+    } else {
+      console.log("Unknown error", error);
+    }
+  }
+}

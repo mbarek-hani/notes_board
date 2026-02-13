@@ -1,6 +1,6 @@
 import { useEffect, useRef, useState } from "react";
 import type { MouseEvent as ReactMouseEvent } from "react";
-import Trash from "./icons/Trash";
+import DeleteButton from "./DeleteButton";
 import Spinner from "./icons/Spinner";
 import { setNewOffset, autoGrow, setZIndex, bodyParser } from "../utils";
 import type { Note, Position, Colors } from "../types";
@@ -8,9 +8,10 @@ import { updateNote } from "../api";
 
 type NoteCardProps = {
   note: Note;
+  setNotes: React.Dispatch<React.SetStateAction<Note[]>>;
 };
 
-function NoteCard({ note }: NoteCardProps) {
+function NoteCard({ note, setNotes }: NoteCardProps) {
   const colors: Colors = JSON.parse(note.colors);
   const body = bodyParser(note.body);
 
@@ -53,12 +54,14 @@ function NoteCard({ note }: NoteCardProps) {
   }
 
   function mouseDown(e: ReactMouseEvent<HTMLDivElement>) {
-    setZIndex(cardRef.current);
-    mouseStartPos.x = e.clientX;
-    mouseStartPos.y = e.clientY;
+    if ((e.target as HTMLElement).className === "card-header") {
+      setZIndex(cardRef.current);
+      mouseStartPos.x = e.clientX;
+      mouseStartPos.y = e.clientY;
 
-    document.addEventListener("mousemove", mouseMove);
-    document.addEventListener("mouseup", mouseUp);
+      document.addEventListener("mousemove", mouseMove);
+      document.addEventListener("mouseup", mouseUp);
+    }
   }
 
   function mouseUp() {
@@ -95,7 +98,7 @@ function NoteCard({ note }: NoteCardProps) {
         style={{ backgroundColor: colors.colorHeader }}
         onMouseDown={mouseDown}
       >
-        <Trash />
+        <DeleteButton noteId={note._id} setNotes={setNotes} />
         {saving && (
           <div className="card-saving">
             <Spinner color={colors.colorText} />
