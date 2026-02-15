@@ -14,27 +14,27 @@ const MONGO_URI = process.env.DB_URI;
 console.log(MONGO_URI);
 
 async function runSeed() {
-  try {
-    console.log("⏳ Connecting...");
-    await mongoose.connect(MONGO_URI);
+	try {
+		console.log("⏳ Connecting...");
+		await mongoose.connect(MONGO_URI);
 
-    console.log("🧹 Clearing old data...");
-    await User.deleteMany();
-    await Note.deleteMany();
+		console.log("🧹 Clearing old data...");
+		await User.deleteMany();
+		await Note.deleteMany();
 
-    console.log("👤 Seeding users...");
-    const users = await seedUsers(usersCount);
-    console.log(users);
+		console.log("👤 Seeding users...");
+		const users = await seedUsers(usersCount);
+		console.log(users);
 
-    console.log("📝 Seeding notes...");
-    await seedNotes(users, notesCount);
+		console.log("📝 Seeding notes...");
+		await seedNotes(users, notesCount);
 
-    console.log("🎉 DONE! Database seeded successfully.");
-    process.exit();
-  } catch (err) {
-    console.error("❌ Seeder error:", err);
-    process.exit(1);
-  }
+		console.log("🎉 DONE! Database seeded successfully.");
+		process.exit();
+	} catch (err) {
+		console.error("❌ Seeder error:", err);
+		process.exit(1);
+	}
 }
 
 runSeed();

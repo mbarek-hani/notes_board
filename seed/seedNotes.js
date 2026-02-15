@@ -36,7 +36,12 @@ export async function seedNotes(users, count = 20) {
 		const randomColor = faker.helpers.arrayElement(colorsList);
 
 		const note = await Note.create({
-			body: JSON.stringify(faker.lorem.sentence(8)),
+			body: JSON.stringify(
+				faker.lorem.sentence({
+					min: 8,
+					max: 32,
+				}),
+			),
 
 			colors: JSON.stringify(randomColor),
 

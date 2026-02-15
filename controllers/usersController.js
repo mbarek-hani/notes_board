@@ -5,8 +5,14 @@ import jwt from "jsonwebtoken";
 // Get All Users
 export const getAllUsers = async (req, res) => {
 	try {
-		const Users = await User.find();
-		res.status(200).json(Users);
+		const users = await User.find();
+		const response = users.map((u) => ({
+			_id: u._id,
+			userName: u.userName,
+			email: u.email,
+			role: u.role,
+		}));
+		res.status(200).json(response);
 	} catch (error) {
 		res.status(500).json({ message: "Server error" });
 	}
