@@ -66,6 +66,7 @@ export async function deleteNote(id: string) {
 		if (!response.ok) {
 			throw new Error("Couldn't delete note");
 		}
+		toast.success("the note was deleted successfully!");
 	} catch (error) {
 		if (error instanceof Error) {
 			toast.error("Error: " + error.message);
