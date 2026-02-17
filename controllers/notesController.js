@@ -1,4 +1,5 @@
 import Note from "../models/Note.js";
+import { getStartOfWeek, getEndOfWeek } from "../utils/index.js";
 
 // Get All Notes
 export const getAllNotes = async (req, res) => {
@@ -87,6 +88,59 @@ export const getNotesCreatedLast7Days = async (req, res) => {
       createdAt: { $gte: sevenDaysAgo },
     }).select("createdAt");
     res.status(200).json(notes);
+  } catch (error) {
+    res.status(500).json({ message: "Server error" });
+  }
+};
+
+export const getStats = async (req, res) => {
+  const now = new Date();
+  const startOfToday = new Date(
+    Date.UTC(
+      now.getUTCFullYear(),
+      now.getUTCMonth(),
+      now.getUTCDate(),
+      0,
+      0,
+      0,
+      0,
+    ),
+  );
+
+  const startOfWeek = getStartOfWeek();
+  const endOfWeek = getEndOfWeek();
+
+  try {
+    const [
+      total,
+      createdToday,
+      createdThisWeek,
+      updatedToday,
+      withBody,
+      emptyBody,
+    ] = await Promise.all([
+      Note.countDocuments(),
+      Note.countDocuments({ createAt: { $gte: startOfToday } }),
+      Note.countDocuments({
+        createdAt: {
+          $gte: startOfWeek,
+          $lte: endOfWeek,
+        },
+      }),
+      Note.countDocuments({ updatedAt: { $gte: startOfToday } }),
+      Note.countDocuments({ body: { $exists: true, $ne: "" } }),
+      Note.countDocuments({
+        $or: [{ body: "" }, { body: { $exists: false } }],
+      }),
+    ]);
+    res.status(200).json({
+      total,
+      createdToday,
+      createdThisWeek,
+      updatedToday,
+      withBody,
+      emptyBody,
+    });
   } catch (error) {
     res.status(500).json({ message: "Server error" });
   }

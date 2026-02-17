@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import Spinner from "../components/icons/Spinner";
 import { Link } from "react-router-dom";
-import { getAllUsers, getNotesCreatedLast7Days } from "../api";
+import { getAllUsers, getNotesCreatedLast7Days, getStats } from "../api";
 import type { User, Stats } from "../types";
 import { initialsFromEmail } from "../utils";
 
@@ -67,13 +67,15 @@ export default function Dashboard() {
       setLoading(true);
       setIsError(false);
 
-      const [users, notesCreatedInTheLast7Days] = await Promise.all([
-        getAllUsers(),
-        getNotesCreatedLast7Days(),
-      ]);
-      console.log(notesCreatedInTheLast7Days);
-      setUsers(users);
-      setLastCreatedAt(notesCreatedInTheLast7Days);
+      const [usersResponse, notesCreatedInTheLast7DaysResponse, statsResponse] =
+        await Promise.all([
+          getAllUsers(),
+          getNotesCreatedLast7Days(),
+          getStats(),
+        ]);
+      setUsers(usersResponse);
+      setLastCreatedAt(notesCreatedInTheLast7DaysResponse);
+      setStats(statsResponse);
     } catch (error) {
       let message = "Error: ";
       if (error instanceof Error) {
