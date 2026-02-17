@@ -2,8 +2,8 @@ import { Router } from "express";
 import { getAllUsers } from "../controllers/usersController.js";
 import { authenticateToken, authorizeRole } from "../middlewares/index.js";
 import {
-  getNotesCreatedLast7Days,
-  getStats,
+	getNotesCreatedLast7Days,
+	getStats,
 } from "../controllers/notesController.js";
 
 const dashboardRouter = Router();

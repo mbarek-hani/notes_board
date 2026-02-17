@@ -1,15 +1,15 @@
 import { Router } from "express";
 import {
-  addNote,
-  updateNoteById,
-  deleteNoteById,
-  getAllNotesOfUser,
+	addNote,
+	updateNoteById,
+	deleteNoteById,
+	getAllNotesOfUser,
 } from "../controllers/notesController.js";
 
 import { createNoteValidator, updateNoteValidator } from "../models/Note.js";
 import {
-  authenticateToken,
-  validatorMiddleware,
+	authenticateToken,
+	validatorMiddleware,
 } from "../middlewares/index.js";
 
 const notesRouter = Router();
@@ -18,10 +18,10 @@ const notesRouter = Router();
 notesRouter.get("/", getAllNotesOfUser);
 notesRouter.post("/", createNoteValidator, validatorMiddleware, addNote);
 notesRouter.put(
-  "/:id",
-  updateNoteValidator,
-  validatorMiddleware,
-  updateNoteById,
+	"/:id",
+	updateNoteValidator,
+	validatorMiddleware,
+	updateNoteById,
 );
 notesRouter.delete("/:id", deleteNoteById);
 
