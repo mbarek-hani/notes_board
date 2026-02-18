@@ -1,9 +1,12 @@
 import { useEffect, useMemo, useState } from "react";
 import Spinner from "../components/icons/Spinner";
-import { Link } from "react-router-dom";
+import Stat from "../components/dashboard/Stat";
+import Chart from "../components/dashboard/Chart";
 import { getAllUsers, getNotesCreatedLast7Days, getStats } from "../api";
 import type { User, Stats } from "../types";
 import { initialsFromEmail } from "../utils";
+import { Bar, Line } from "react-chartjs-2";
+import { toast } from "react-toastify";
 
 import {
 	Chart as ChartJS,
@@ -17,9 +20,8 @@ import {
 	Legend,
 	Filler,
 } from "chart.js";
-
-import { Bar, Line } from "react-chartjs-2";
-import { toast } from "react-toastify";
+import Header from "../components/dashboard/Header";
+import Search from "../components/dashboard/Search";
 
 ChartJS.register(
 	CategoryScale,
@@ -47,22 +49,16 @@ export default function Dashboard() {
 		{ _id: string; createdAt: string }[]
 	>([]);
 	const [stats, setStats] = useState<Stats>(defaultStats);
-	const [users, setUsers] = useState<User[]>([]);
+	const [users, setUsers] = useState<(User & { totalNotes: number })[]>([]);
 	const [loading, setLoading] = useState(true);
 	const [isError, setIsError] = useState(false);
 
 	const [search, setSearch] = useState("");
 
 	// current user (simple)
-	const currentEmail =
-		localStorage.getItem("email") ||
-		localStorage.getItem("userEmail") ||
-		localStorage.getItem("userName") ||
-		"";
-	const currentInitials = initialsFromEmail(currentEmail);
+	const currentEmail = localStorage.getItem("email") || "";
 
 	const fetchData = async () => {
-		console.log("effect: fetching data");
 		try {
 			setLoading(true);
 			setIsError(false);
@@ -197,22 +193,12 @@ export default function Dashboard() {
 		};
 	};
 
-	// ----------- USERS (bottom) -----------
-
-	const notesCountByUser = useMemo(() => {
-		const map: Record<string, number> = {};
-		for (const u of users) {
-			map[u._id] = 0;
-		}
-		return map;
-	}, [users]);
-
 	const filteredUsers = useMemo(() => {
 		const q = search.trim().toLowerCase();
 		if (!q) return users;
 		return users.filter((u) => {
-			const email = (u.email ?? "").toLowerCase();
-			const role = (u.role ?? "").toLowerCase();
+			const email = u.email.toLowerCase();
+			const role = u.role.toLowerCase();
 			return email.includes(q) || role.includes(q);
 		});
 	}, [users, search]);
@@ -220,30 +206,7 @@ export default function Dashboard() {
 	return (
 		<div className="dashboard">
 			{/* HEADER */}
-			<div className="topHeader">
-				<div className="topHeader-left-side">
-					<h1 style={{ margin: 0, fontSize: 22, letterSpacing: 0.2 }}>
-						Dashboard
-					</h1>
-				</div>
-
-				<div style={{ display: "flex", alignItems: "center", gap: 10 }}>
-					<Link to="/notes">
-						<button className="btn btn-primary">Notes</button>
-					</Link>
-					<button
-						type="button"
-						className="btn btn-secondary"
-						onClick={fetchData}
-					>
-						Refresh
-					</button>
-
-					<div title={currentEmail || "Guest"} className="userBadge">
-						{currentInitials}
-					</div>
-				</div>
-			</div>
+			<Header email={currentEmail} fetchData={fetchData} />
 
 			{loading && (
 				<div
@@ -272,35 +235,17 @@ export default function Dashboard() {
 
 					{/* CHARTS */}
 					<section className="chartsGrid">
-						<div className="cardStyle">
-							<div className="cardHeaderRow">
-								<h3 className="cardTitle">With text vs Empty</h3>
-								<span className="cardBadge">quality</span>
-							</div>
-							<div style={{ height: 220 }}>
-								<Bar data={contentBarData} options={chartOptionsBase} />
-							</div>
-						</div>
+						<Chart title="With text vs Empty" badge="quality">
+							<Bar data={contentBarData} options={chartOptionsBase} />
+						</Chart>
 
-						<div className="cardStyle">
-							<div className="cardHeaderRow">
-								<h3 className="cardTitle">Activity</h3>
-								<span className="cardBadge">today / week</span>
-							</div>
-							<div style={{ height: 220 }}>
-								<Bar data={activityBarData} options={chartOptionsBase} />
-							</div>
-						</div>
+						<Chart title="Activity" badge="today / week">
+							<Bar data={activityBarData} options={chartOptionsBase} />
+						</Chart>
 
-						<div className="cardStyle">
-							<div className="cardHeaderRow">
-								<h3 className="cardTitle">Created trend</h3>
-								<span className="cardBadge">last 7 days</span>
-							</div>
-							<div style={{ height: 220 }}>
-								<Line data={createdLineData()} options={chartOptionsBase} />
-							</div>
-						</div>
+						<Chart title="Created trend" badge="last 7 days">
+							<Line data={createdLineData()} options={chartOptionsBase} />
+						</Chart>
 					</section>
 				</>
 			)}
@@ -312,15 +257,11 @@ export default function Dashboard() {
 						<div className="cardHeaderRow">
 							<h3 className="cardTitle">Users</h3>
 
-							<div className="searchBox">
-								<span style={{ fontSize: 16, opacity: 0.7 }}>Search</span>
-								<input
-									value={search}
-									onChange={(e) => setSearch(e.target.value)}
-									placeholder="user email, role…"
-									className="searchInput"
-								/>
-							</div>
+							<Search
+								search={search}
+								handleSearch={(e) => setSearch(e.target.value)}
+							/>
+
 							<span className="cardBadge">{`${filteredUsers.length} users`}</span>
 						</div>
 
@@ -340,7 +281,6 @@ export default function Dashboard() {
 									<tbody>
 										{filteredUsers.map((u) => {
 											const init = initialsFromEmail(u.email);
-											const total = notesCountByUser[u._id] ?? 0;
 											return (
 												<tr key={u._id}>
 													<td className="tdStyle">
@@ -365,7 +305,7 @@ export default function Dashboard() {
 													<td className="tdStyle">{u.email ?? "—"}</td>
 													<td className="tdStyle">{u.role ?? "—"}</td>
 													<td className="tdStyle">
-														<b>{total}</b>
+														<b>{u.totalNotes}</b>
 													</td>
 												</tr>
 											);
@@ -377,15 +317,6 @@ export default function Dashboard() {
 					</div>
 				</section>
 			)}
-		</div>
-	);
-}
-
-function Stat({ title, value }: { title: string; value: string | number }) {
-	return (
-		<div className="kpiCard">
-			<div style={{ fontSize: 12, opacity: 0.9 }}>{title}</div>
-			<div style={{ fontSize: 26, fontWeight: 800, marginTop: 8 }}>{value}</div>
 		</div>
 	);
 }

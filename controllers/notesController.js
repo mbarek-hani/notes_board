@@ -95,21 +95,12 @@ export const getNotesCreatedLast7Days = async (req, res) => {
 
 export const getStats = async (req, res) => {
 	const now = new Date();
-	const startOfToday = new Date(
-		Date.UTC(
-			now.getUTCFullYear(),
-			now.getUTCMonth(),
-			now.getUTCDate(),
-			0,
-			0,
-			0,
-			0,
-		),
-	);
+
+	const startOfToday = new Date();
+	startOfToday.setHours(0, 0, 0, 0);
 
 	const startOfWeek = getStartOfWeek();
 	const endOfWeek = getEndOfWeek();
-
 	try {
 		const [
 			total,
@@ -120,17 +111,24 @@ export const getStats = async (req, res) => {
 			emptyBody,
 		] = await Promise.all([
 			Note.countDocuments(),
-			Note.countDocuments({ createAt: { $gte: startOfToday } }),
+			Note.countDocuments({ createdAt: { $gte: startOfToday } }),
 			Note.countDocuments({
 				createdAt: {
 					$gte: startOfWeek,
 					$lte: endOfWeek,
 				},
 			}),
-			Note.countDocuments({ updatedAt: { $gte: startOfToday } }),
-			Note.countDocuments({ body: { $exists: true, $ne: "" } }),
 			Note.countDocuments({
-				$or: [{ body: "" }, { body: { $exists: false } }],
+				updatedAt: { $gte: startOfToday },
+				$expr: { $gt: ["$updatedAt", "$createdAt"] },
+			}),
+			Note.countDocuments({
+				$expr: {
+					$gt: [{ $strLenCP: { $trim: { input: "$body" } } }, 0],
+				},
+			}),
+			Note.countDocuments({
+				$or: [{ body: "" }, { body: null }, { body: { $exists: false } }],
 			}),
 		]);
 		res.status(200).json({

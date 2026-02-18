@@ -5,14 +5,29 @@ import jwt from "jsonwebtoken";
 // Get All Users
 export const getAllUsers = async (req, res) => {
 	try {
-		const users = await User.find();
-		const response = users.map((u) => ({
-			_id: u._id,
-			userName: u.userName,
-			email: u.email,
-			role: u.role,
-		}));
-		res.status(200).json(response);
+		// fetch not only users but also total notes count each user created
+		const users = await User.aggregate([
+			{
+				$lookup: {
+					from: "notes",
+					localField: "_id",
+					foreignField: "user_id",
+					as: "notes",
+				},
+			},
+			{
+				$addFields: {
+					totalNotes: { $size: "$notes" },
+				},
+			},
+			{
+				$project: {
+					notes: 0,
+					password: 0,
+				},
+			},
+		]);
+		res.status(200).json(users);
 	} catch (error) {
 		res.status(500).json({ message: "Server error" });
 	}

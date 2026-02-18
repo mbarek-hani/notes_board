@@ -5,6 +5,7 @@ const noteSchema = new mongoose.Schema(
 	{
 		body: {
 			type: String,
+			default: "",
 		},
 		colors: {
 			type: String,
@@ -36,7 +37,7 @@ export const createNoteValidator = [
 export const updateNoteValidator = [
 	param("id").isMongoId().withMessage("Invalid note ID"),
 
-	body("body").optional().notEmpty().withMessage("Body cannot be empty"),
+	body("body").optional(),
 
 	body("colors").optional().notEmpty().withMessage("Color cannot be empty"),
 

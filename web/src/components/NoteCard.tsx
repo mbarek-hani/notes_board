@@ -13,7 +13,6 @@ type NoteCardProps = {
 
 function NoteCard({ note }: NoteCardProps) {
 	const colors: Colors = JSON.parse(note.colors);
-	console.log(note.body);
 	const body = bodyParser(note.body);
 
 	const { setSelectedNote } = useNotesContext();
@@ -77,8 +76,16 @@ function NoteCard({ note }: NoteCardProps) {
 		saveData("position", newPosition);
 	}
 
-	async function saveData(key: string, value: Colors | Position | string) {
-		const payload = { [key]: JSON.stringify(value) };
+	async function saveData(
+		key: "body" | "colors" | "position",
+		value: Colors | Position | string,
+	) {
+		const payload: { body?: string; colors?: string; position?: string } = {};
+		if (key === "body" && typeof value === "string") {
+			payload.body = value.trim();
+		} else {
+			payload[key] = JSON.stringify(value);
+		}
 		await updateNote(note._id, payload);
 		setSaving(false);
 	}

@@ -104,7 +104,9 @@ export async function addNote(payload: {
 	}
 }
 
-export async function getAllUsers(): Promise<User[]> {
+export async function getAllUsers(): Promise<
+	(User & { totalNotes: number })[]
+> {
 	try {
 		const response = await fetch(`${API_URL}/dashboard/users`, {
 			method: "GET",
@@ -116,7 +118,7 @@ export async function getAllUsers(): Promise<User[]> {
 		if (!response.ok) {
 			throw new Error("Couldn't load users");
 		}
-		const data = (await response.json()) as User[];
+		const data = (await response.json()) as (User & { totalNotes: number })[];
 		return data;
 	} catch (error) {
 		if (error instanceof Error) {
