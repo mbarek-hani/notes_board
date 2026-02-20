@@ -17,7 +17,7 @@ body {
     margin: 0;
 }
 
-#app {
+.app {
     background-color: #212228;
     background-image:
         linear-gradient(#292a30 0.1em, transparent 0.1em),
@@ -26,13 +26,6 @@ body {
     height: 100vh;
     position: relative;
     overflow: auto;
-}
-
-#app:has(.dashboard),
-#app:has(.auth-container) {
-    background-image: none;
-    position: static;
-    overflow: hidden;
 }
 
 .dashboard {
@@ -162,9 +155,8 @@ textarea:focus {
     flex-wrap: wrap;
     padding: 14px;
     border-radius: 16px;
-    background-color: #212228;
+    border: 1px solid white;
     color: white;
-    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.2);
 }
 
 .topHeader-left-side {
@@ -181,7 +173,7 @@ textarea:focus {
     padding: 8px 10px;
     border-radius: 12px;
     background: transparent;
-    border: 1px solid rgba(255, 255, 255, 0.14);
+    border: 1px solid white;
 }
 
 .searchInput {
@@ -212,8 +204,7 @@ textarea:focus {
     border-radius: 12px;
     display: grid;
     place-items: center;
-    background: rgba(15, 23, 42, 0.06);
-    border: 1px solid rgba(15, 23, 42, 0.1);
+    border: 1px solid white;
     font-weight: 900;
     letter-spacing: 0.5px;
 }
@@ -240,12 +231,10 @@ textarea:focus {
 }
 
 .cardStyle {
-    background-color: #212228;
     color: white;
-    border: 1px solid rgba(15, 23, 42, 0.08);
+    border: 1px solid white;
     border-radius: 16px;
     padding: 14px;
-    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.2);
 }
 
 .kpiGrid {
@@ -259,8 +248,7 @@ textarea:focus {
     border-radius: 16px;
     padding: 14px;
     color: white;
-    background-color: #212228;
-    box-shadow: 0 2px 5px rgba(255, 255, 255, 0.2);
+    border: 1px solid white;
 }
 
 .chartsGrid {

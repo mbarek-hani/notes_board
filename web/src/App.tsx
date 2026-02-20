@@ -9,7 +9,7 @@ import Register from "./pages/Register";
 
 function App() {
   return (
-    <div id="app">
+    <>
       <Routes>
         <Route
           path="/notes"
@@ -32,7 +32,7 @@ function App() {
           color: "#fff",
         }}
       />
-    </div>
+    </>
   );
 }
 

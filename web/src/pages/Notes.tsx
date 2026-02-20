@@ -3,16 +3,16 @@ import NoteCard from "../components/NoteCard";
 import useNotesContext from "../hooks/useNotesContext";
 
 function Notes() {
-	const { notes } = useNotesContext();
+  const { notes } = useNotesContext();
 
-	return (
-		<div>
-			{notes.map((note) => (
-				<NoteCard note={note} key={note._id} />
-			))}
-			<Controls />
-		</div>
-	);
+  return (
+    <div className="app">
+      {notes.map((note) => (
+        <NoteCard note={note} key={note._id} />
+      ))}
+      <Controls />
+    </div>
+  );
 }
 
 export default Notes;
