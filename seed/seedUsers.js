@@ -11,7 +11,7 @@ export async function seedUsers(count = 5) {
 			email: faker.internet.email().toLowerCase(),
 
 			// 🔥 all users have same password for testing
-			password: await bcrypt.hash("123456", 10),
+			password: await bcrypt.hash("password", 10),
 
 			role: i === 0 ? "admin" : "user",
 		});

@@ -4,7 +4,8 @@ import { getStartOfWeek, getEndOfWeek } from "../utils/index.js";
 // Get All Notes
 export const getAllNotes = async (req, res) => {
 	try {
-		const notes = await Note.find();
+		console.log(req.user._id);
+		const notes = await Note.find({ user_id: req.user._id });
 		res.status(200).json(notes);
 	} catch (error) {
 		res.status(500).json({ message: "Server error" });

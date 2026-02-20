@@ -8,8 +8,8 @@ import {
 
 const dashboardRouter = Router();
 
-// usersRouter.use(authenticateToken); // protect all routes
-// usersRouter.use(authorizeRole('admin'));
+dashboardRouter.use(authenticateToken); // protect all routes
+dashboardRouter.use(authorizeRole("admin"));
 
 dashboardRouter.get("/users/", getAllUsers);
 

@@ -6,34 +6,59 @@ import NotesProvider from "./contexts/NotesContext";
 import { ToastContainer } from "react-toastify";
 import Login from "./pages/Login";
 import Register from "./pages/Register";
+import ProtectedRoute from "./components/ProtectedRoute";
+import PublicRoute from "./components/PublicRoute";
 
 function App() {
-  return (
-    <>
-      <Routes>
-        <Route
-          path="/notes"
-          element={
-            <NotesProvider>
-              <Notes />
-            </NotesProvider>
-          }
-        />
-        <Route path="/dashboard" element={<Dashboard />} />
-        <Route path="/login" element={<Login />} />
-        <Route path="/register" element={<Register />} />
-        <Route path="*" element={<NotFound />} />
-      </Routes>
-      <ToastContainer
-        position="top-right"
-        theme="dark"
-        toastStyle={{
-          backgroundColor: "#555",
-          color: "#fff",
-        }}
-      />
-    </>
-  );
+	return (
+		<>
+			<Routes>
+				<Route
+					path="/notes"
+					element={
+						<ProtectedRoute>
+							<NotesProvider>
+								<Notes />
+							</NotesProvider>
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/dashboard"
+					element={
+						<ProtectedRoute requiredRole="admin">
+							<Dashboard />
+						</ProtectedRoute>
+					}
+				/>
+				<Route
+					path="/login"
+					element={
+						<PublicRoute>
+							<Login />
+						</PublicRoute>
+					}
+				/>
+				<Route
+					path="/register"
+					element={
+						<PublicRoute>
+							<Register />
+						</PublicRoute>
+					}
+				/>
+				<Route path="*" element={<NotFound />} />
+			</Routes>
+			<ToastContainer
+				position="top-right"
+				theme="dark"
+				toastStyle={{
+					backgroundColor: "#555",
+					color: "#fff",
+				}}
+			/>
+		</>
+	);
 }
 
 export default App;

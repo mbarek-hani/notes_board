@@ -80,23 +80,34 @@ export const registerUser = async (req, res) => {
 
 		// Generer le token
 		const token = jwt.sign(
-			{ id: user._id, email: user.email, role: user.role },
+			{
+				id: user._id,
+				userNmae: user.userName,
+				email: user.email,
+				role: user.role,
+			},
 			process.env.JWT_SECRET,
 			{ expiresIn: "24h" },
 		);
 
+		res.cookie("token", token, {
+			httpOnly: true,
+			secure: process.env.ENV === "production",
+			sameSite: "strict",
+			maxAge: 1000 * 60 * 60 * 24,
+		});
+
 		res.status(201).json({
 			success: true,
-			token,
 			user: {
-				id: user._id,
+				_id: user._id,
 				userName: user.userName,
 				email: user.email,
 				role: user.role,
 			},
 		});
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		res.status(500).json({ success: false, error: error.message });
 	}
 };
 // Login User
@@ -106,6 +117,7 @@ export const loginUser = async (req, res) => {
 
 		// Trouver l’utilisateur
 		const user = await User.findOne({ email });
+		console.log(user);
 		if (!user) {
 			return res.status(401).json({ error: "Email ou mot de passe incorrect" });
 		}
@@ -118,24 +130,52 @@ export const loginUser = async (req, res) => {
 
 		// Générer le token
 		const token = jwt.sign(
-			{ id: user._id, email: user.email, role: user.role },
+			{
+				id: user._id,
+				userName: user.userName,
+				email: user.email,
+				role: user.role,
+			},
 			process.env.JWT_SECRET,
 			{ expiresIn: "24h" },
 		);
 
-		res.json({
+		res.cookie("token", token, {
+			httpOnly: true,
+			secure: process.env.ENV === "production",
+			sameSite: "strict",
+			maxAge: 1000 * 60 * 60 * 24,
+		});
+
+		res.status(200).json({
 			success: true,
-			token,
 			user: {
-				id: user._id,
+				_id: user._id,
 				userName: user.userName,
 				email: user.email,
 				role: user.role,
 			},
 		});
 	} catch (error) {
-		res.status(500).json({ error: error.message });
+		res.status(500).json({ success: false, error: error.message });
 	}
+};
+
+export const logoutUser = async (req, res) => {
+	res.clearCookie("token");
+	res.status(200).json({ success: true });
+};
+
+export const me = async (req, res) => {
+	res.status(200).json({
+		success: true,
+		user: {
+			_id: req.user._id,
+			userName: req.user.userName,
+			email: req.user.email,
+			role: req.user.role,
+		},
+	});
 };
 
 // Update User

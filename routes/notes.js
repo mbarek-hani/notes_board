@@ -14,7 +14,8 @@ import {
 
 const notesRouter = Router();
 
-// notesRouter.use(authenticateToken); // protect all routes
+notesRouter.use(authenticateToken);
+
 notesRouter.get("/", getAllNotesOfUser);
 notesRouter.post("/", createNoteValidator, validatorMiddleware, addNote);
 notesRouter.put(

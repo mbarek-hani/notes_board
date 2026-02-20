@@ -18,7 +18,7 @@ const noteSchema = new mongoose.Schema(
 		user_id: {
 			type: mongoose.Schema.Types.ObjectId,
 			ref: "User", // name of the User model
-			//required: true,
+			required: true,
 			index: true,
 		},
 	},
